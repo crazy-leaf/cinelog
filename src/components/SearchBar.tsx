@@ -64,8 +64,7 @@ export const SearchBar = ({ onSearch, isLoading }: SearchBarProps) => {
           <select
             id="type-filter"
             value={filters.type}
-            // The `as any` cast has been removed to fix the TypeScript error.
-            onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+            onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value as "movie" | "series" | "" }))}
             className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-input bg-card/70 backdrop-blur-sm text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 min-w-[120px]"
             disabled={isLoading}
           >
