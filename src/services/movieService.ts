@@ -1,10 +1,15 @@
-import { Movie, MovieDetails, SearchResponse, SearchParams } from '../types/movie';
+import { MovieDetails, SearchResponse, SearchParams } from '../types/movie';
 
 const API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY;
+
+if (!API_KEY) {
+  throw new Error('OMDB API key is not defined. Please set it in your .env.local file.');
+}
+
 const BASE_URL = 'https://www.omdbapi.com/';
 
 class MovieService {
-  private async makeRequest(params: Record<string, string>): Promise<any> {
+  private async makeRequest<T>(params: Record<string, string>): Promise<T> {
     const url = new URL(BASE_URL);
     url.searchParams.set('apikey', API_KEY);
     
@@ -19,9 +24,11 @@ class MovieService {
       throw new Error('Network response was not ok');
     }
     
-    const data = await response.json();
-    if (data.Response === 'False') {
-      throw new Error(data.Error || 'Unknown error occurred');
+    const data: T = await response.json();
+    
+    if ('Response' in data && (data as any).Response === 'False') {
+      const errorData = data as unknown as { Error: string };
+      throw new Error(errorData.Error || 'Unknown error occurred');
     }
     
     return data;
@@ -41,11 +48,11 @@ class MovieService {
       searchParams.y = params.year;
     }
 
-    return this.makeRequest(searchParams);
+    return this.makeRequest<SearchResponse>(searchParams);
   }
 
   async getMovieDetails(imdbID: string): Promise<MovieDetails> {
-    return this.makeRequest({
+    return this.makeRequest<MovieDetails>({
       i: imdbID,
       plot: 'full',
     });

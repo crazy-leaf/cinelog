@@ -7,7 +7,7 @@ import { MovieGrid } from '@/components/MovieGrid';
 import { Pagination } from '@/components/Pagination';
 import { MovieDetailsModal } from '@/components/MovieDetailsModal';
 import { movieService } from '@/services/movieService';
-import { Movie, SearchFilters } from '@/types/movie';
+import { Movie, SearchFilters, SearchResponse } from '@/types/movie';
 import { Film } from 'lucide-react';
 
 
@@ -18,7 +18,8 @@ export default function Home() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
+  // Explicitly type the useQuery hook to resolve the any error
+  const { data, isLoading, error } = useQuery<SearchResponse, Error>({
     queryKey: ['movies', searchQuery, searchFilters, currentPage],
     queryFn: () => movieService.searchMovies({
       query: searchQuery,
@@ -51,7 +52,7 @@ export default function Home() {
     if (error) {
       toast({
         title: 'Search Error',
-        description: error instanceof Error ? error.message : 'Failed to search movies',
+        description: error.message, // error is now guaranteed to be an Error object
         variant: 'destructive',
       });
     }
@@ -81,7 +82,7 @@ export default function Home() {
             {data && (
               <div className="text-center">
                 <p className="text-muted-foreground">
-                  Found {totalResults.toLocaleString()} results for "{searchQuery}"
+                  Found {totalResults.toLocaleString()} results for &quot;{searchQuery}&quot;
                   {searchFilters.type && ` in ${searchFilters.type}s`}
                   {searchFilters.year && ` from ${searchFilters.year}`}
                 </p>
