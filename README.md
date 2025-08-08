@@ -1,18 +1,18 @@
-### **Cinelog: A Movie & Series Explorer**
+### **CineSearch: A Movie & Series Explorer**
 
-Cinelog is a responsive web application built with Next.js and TypeScript. It allows users to search for movies and series using the OMDb API, with features for filtering, pagination, and viewing detailed information for each title.
+CineSearch is a responsive web application built with Next.js and TypeScript. It allows users to search for movies and series using the OMDb API, with features for filtering, pagination, and viewing detailed information for each title.
 
 <br>
 
 ## Screenshots
 
-Here's a look at the Weather Box in action:
+Here's a look at the CineSearch in action:
 
-![Cinelog App Main Screen 1](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.10.36%E2%80%AFPM.png)
+![CineSearch App Main Screen 1](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.10.36%E2%80%AFPM.png)
 
-![Cinelog App Main Screen 2](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.11.05%E2%80%AFPM.png)
+![CineSearch App Main Screen 2](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.11.05%E2%80%AFPM.png)
 
-![Cinelog App Main Screen 3](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.11.39%E2%80%AFPM.png)
+![CineSearch App Main Screen 3](https://github.com/crazy-leaf/cinelog/blob/main/screenshots/Screenshot%202025-08-08%20at%205.11.39%E2%80%AFPM.png)
 
 ## **Features** 🚀
 
