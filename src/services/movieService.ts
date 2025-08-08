@@ -24,14 +24,14 @@ class MovieService {
       throw new Error('Network response was not ok');
     }
     
-    const data: T = await response.json();
+    const data = await response.json();
     
-    if ('Response' in data && (data as any).Response === 'False') {
-      const errorData = data as unknown as { Error: string };
+    if (data && typeof data === 'object' && 'Response' in data && data.Response === 'False') {
+      const errorData = data as { Error: string };
       throw new Error(errorData.Error || 'Unknown error occurred');
     }
     
-    return data;
+    return data as T;
   }
 
   async searchMovies(params: SearchParams): Promise<SearchResponse> {
