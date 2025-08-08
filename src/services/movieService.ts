@@ -15,8 +15,9 @@ const BASE_URL = 'https://www.omdbapi.com/';
 class MovieService {
   private async makeRequest<T>(params: Record<string, string>): Promise<T> {
     const url = new URL(BASE_URL);
-    // Use the API key from the environment variable
-    url.searchParams.set('apikey', API_KEY);
+    // Use the API key from the environment variable.
+    // The `!` is a non-null assertion, telling TypeScript that API_KEY is a string here.
+    url.searchParams.set('apikey', API_KEY!);
     
     Object.entries(params).forEach(([key, value]) => {
       if (value) {
