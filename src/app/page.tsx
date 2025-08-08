@@ -1,101 +1,133 @@
-import Image from "next/image";
+'use client'
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from '@/hooks/use-toast';
+import { SearchBar } from '@/components/SearchBar';
+import { MovieGrid } from '@/components/MovieGrid';
+import { Pagination } from '@/components/Pagination';
+import { MovieDetailsModal } from '@/components/MovieDetailsModal';
+import { movieService } from '@/services/movieService';
+import { Movie, SearchFilters } from '@/types/movie';
+import { Film } from 'lucide-react';
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({ type: '', year: '' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['movies', searchQuery, searchFilters, currentPage],
+    queryFn: () => movieService.searchMovies({
+      query: searchQuery,
+      ...searchFilters,
+      page: currentPage,
+    }),
+    enabled: !!searchQuery,
+    retry: false,
+  });
+
+  const handleSearch = (query: string, filters: SearchFilters) => {
+    setSearchQuery(query);
+    setSearchFilters(filters);
+    setCurrentPage(1);
+  };
+
+  const handleMovieClick = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const movies = data?.Search || [];
+  const totalResults = parseInt(data?.totalResults || '0');
+
+  React.useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Search Error',
+        description: error instanceof Error ? error.message : 'Failed to search movies',
+        variant: 'destructive',
+      });
+    }
+  }, [error]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 lg:py-12 max-w-7xl">
+        <header className="text-center mb-8 lg:mb-16">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Film className="h-10 w-10 lg:h-12 lg:w-12 text-primary flex-shrink-0" />
+            <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+              CineSearch
+            </h1>
+          </div>
+          <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+            Discover movies and TV series from around the world. Search, explore, and find your next favorite watch.
+          </p>
+        </header>
+
+        <section className="mb-8 lg:mb-12">
+          <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+        </section>
+
+        {searchQuery && (
+          <div className="space-y-8">
+            {data && (
+              <div className="text-center">
+                <p className="text-muted-foreground">
+                  Found {totalResults.toLocaleString()} results for "{searchQuery}"
+                  {searchFilters.type && ` in ${searchFilters.type}s`}
+                  {searchFilters.year && ` from ${searchFilters.year}`}
+                </p>
+              </div>
+            )}
+
+            <MovieGrid
+              movies={movies}
+              onMovieClick={handleMovieClick}
+              isLoading={isLoading}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+            {data && totalResults > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalResults={totalResults}
+                onPageChange={handlePageChange}
+                isLoading={isLoading}
+              />
+            )}
+          </div>
+        )}
+
+        {!searchQuery && (
+          <section className="text-center py-12 lg:py-20 px-4">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-6xl lg:text-8xl mb-8 animate-pulse">🍿</div>
+              <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-6 leading-tight">
+                Ready to discover amazing content?
+              </h2>
+              <p className="text-base lg:text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed">
+                Use the search bar above to find movies and TV series. Filter by type and year to narrow down your results.
+              </p>
+            </div>
+          </section>
+        )}
+      </div>
+
+      <MovieDetailsModal
+        movie={selectedMovie}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedMovie(null);
+        }}
+      />
     </div>
   );
 }

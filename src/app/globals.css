@@ -2,26 +2,173 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 222 84% 5%;
+    --foreground: 210 40% 98%;
+    --card: 225 84% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 225 84% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 45 100% 60%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 60.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 45 100% 60%;
+    --radius: 0.75rem;
+    --cinema-gold: 45 100% 60%;
+    --cinema-gold-muted: 45 50% 30%;
+    --cinema-red: 0 72% 51%;
+    --cinema-blue: 217 91% 60%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(222 84% 5%), hsl(225 84% 8%));
+    --gradient-card: linear-gradient(180deg, hsl(225 84% 8%), hsl(215 27.9% 16.9%));
+    --gradient-accent: linear-gradient(90deg, hsl(45 100% 60%), hsl(45 80% 55%));
+    
+    --shadow-card: 0 4px 20px hsl(222 84% 2% / 0.3);
+    --shadow-card-hover: 0 8px 40px hsl(222 84% 2% / 0.4);
+    --shadow-glow: 0 0 30px hsl(45 100% 60% / 0.2);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-out;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  html {
+    background-color: hsl(var(--background));
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-hero);
+    min-height: 100vh;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer components {
+  .movie-card {
+    @apply relative overflow-hidden rounded-lg border bg-card text-card-foreground;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
   }
+  
+  .movie-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-4px);
+  }
+  
+  .search-input {
+    @apply w-full px-4 py-3 rounded-lg border bg-card/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground;
+    transition: var(--transition-smooth);
+  }
+  
+  .search-input:focus {
+    @apply outline-none ring-2 ring-primary;
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg font-medium;
+    background: var(--gradient-accent);
+    color: hsl(var(--primary-foreground));
+    transition: var(--transition-smooth);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+.app-root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
 }
